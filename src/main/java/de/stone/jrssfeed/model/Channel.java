@@ -1,8 +1,11 @@
 package de.stone.jrssfeed.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,13 +38,13 @@ public class Channel {
 	private String webMaster;
 
 	@XmlElement(required = false)
-	private Date pubDate;
+	private String pubDate;
 
 	@XmlElement(required = false)
-	private Date lastBuildDate;
+	private String lastBuildDate;
 
 	@XmlElement(required = false)
-	private List<String> category;
+	private List<String> category = new ArrayList<>();
 
 	@XmlElement(required = false)
 	private String generator;
@@ -62,20 +65,24 @@ public class Channel {
 	private TextInput textInput;
 
 	@XmlElement(required = false)
-	private List<Integer> skipHours = new ArrayList<>();
+	private SkipHoursList skipHours = new SkipHoursList();
 
 	@XmlElement(required = false)
-	private List<SkipDay> skipDays = new ArrayList<>();
+	private SkipDaysList skipDays = new SkipDaysList();
 
 	@XmlElement(required = true)
 	private List<RssItem> item = new ArrayList<>();
 
+	public void addCategory(final String category) {
+		this.category.add(category);
+	}
+
 	public void addSkipHours(final int skipHour) {
-		this.skipHours.add(skipHour);
+		this.skipHours.getHour().add(skipHour);
 	}
 
 	public void addSkipDays(final SkipDay skipDay) {
-		this.skipDays.add(skipDay);
+		this.skipDays.getDay().add(skipDay);
 	}
 
 	public void addItem(final RssItem item) {
@@ -139,19 +146,32 @@ public class Channel {
 	}
 
 	public Date getPubDate() {
-		return this.pubDate;
+		try {
+			return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",
+					Locale.ENGLISH).parse(this.pubDate);
+		} catch (final ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void setPubDate(final Date pubDate) {
-		this.pubDate = pubDate;
+		this.pubDate = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",
+				Locale.ENGLISH).format(pubDate);
 	}
 
 	public Date getLastBuildDate() {
-		return this.lastBuildDate;
+		try {
+			return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",
+					Locale.ENGLISH).parse(this.lastBuildDate);
+		} catch (final ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void setLastBuildDate(final Date lastBuildDate) {
-		this.lastBuildDate = lastBuildDate;
+		this.lastBuildDate = new SimpleDateFormat(
+				"EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
+				.format(lastBuildDate);
 	}
 
 	public List<String> getCategory() {
@@ -210,19 +230,19 @@ public class Channel {
 		this.textInput = textInput;
 	}
 
-	public List<Integer> getSkipHours() {
+	public SkipHoursList getSkipHours() {
 		return this.skipHours;
 	}
 
-	public void setSkipHours(final List<Integer> skipHours) {
+	public void setSkipHours(final SkipHoursList skipHours) {
 		this.skipHours = skipHours;
 	}
 
-	public List<SkipDay> getSkipDays() {
+	public SkipDaysList getSkipDays() {
 		return this.skipDays;
 	}
 
-	public void setSkipDays(final List<SkipDay> skipDays) {
+	public void setSkipDays(final SkipDaysList skipDays) {
 		this.skipDays = skipDays;
 	}
 

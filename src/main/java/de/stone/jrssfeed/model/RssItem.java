@@ -1,6 +1,9 @@
 package de.stone.jrssfeed.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +30,7 @@ public class RssItem {
 	private String comments;
 
 	@XmlElement(required = false)
-	private Date pubDate;
+	private String pubDate;
 
 	@XmlElement(required = false)
 	private Guid guid;
@@ -82,11 +85,17 @@ public class RssItem {
 	}
 
 	public Date getPubDate() {
-		return this.pubDate;
+		try {
+			return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",
+					Locale.ENGLISH).parse(this.pubDate);
+		} catch (final ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void setPubDate(final Date pubDate) {
-		this.pubDate = pubDate;
+		this.pubDate = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",
+				Locale.ENGLISH).format(pubDate);
 	}
 
 	public Guid getGuid() {

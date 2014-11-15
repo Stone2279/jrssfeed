@@ -23,7 +23,7 @@ public class Rss {
 	private Channel channel;
 
 	@XmlAttribute(name = "version", required = true)
-	private String version;
+	private String version = "2.0";
 
 	public Channel getChannel() {
 		return this.channel;
@@ -34,11 +34,7 @@ public class Rss {
 	}
 
 	public String getVersion() {
-		if (this.version == null) {
-			return "2.0";
-		} else {
-			return this.version;
-		}
+		return this.version;
 	}
 
 	public void setVersion(final String value) {
