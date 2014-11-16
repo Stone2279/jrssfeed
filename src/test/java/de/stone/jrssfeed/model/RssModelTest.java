@@ -1,13 +1,21 @@
 package de.stone.jrssfeed.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
 public class RssModelTest {
 
+	private final static String RSS_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><rss version=\"2.0\"><channel><title>Newsfeed</title><link>http://www.newsfeed.de</link><description>Test Newsfeed</description><language>DE-de</language><copyright>Copyright 2014</copyright><managingEditor>managing@test.com</managingEditor><webMaster>webmaster@test.com</webMaster><pubDate>Fri, 14 Mar 2014 03:11:43 +0100</pubDate><lastBuildDate>Fri, 14 Mar 2014 03:11:43 +0100</lastBuildDate><category>Newspapers</category><generator>Test generator</generator><docs>http://docs.de</docs><cloud domain=\"Cloud domain\" port=\"8888\" path=\"Cloud path\" registerProcedure=\"cloud register procedure\" protocol=\"http-post\"/><ttl>20</ttl><image><url>http://www.imageurl.de</url><title>Test image</title><link>http://www.imagelink.de</link><width>50</width><height>20</height><description>Image description</description></image><textInput><title>TextInout title</title><description>TextInput description</description><name>TextInput name</name><link>http://www.link.de</link></textInput><skipHours><hour>5</hour><hour>8</hour></skipHours><skipDays><day>Monday</day><day>Wednesday</day></skipDays><item><description>Item description</description><title>My news</title><author>author@test.de</author><link>http://www.mynews.de</link><comments>http://www.comments.com</comments><pubDate>Fri, 14 Mar 2014 03:11:43 +0100</pubDate><guid isPermaLink=\"false\">abcdefg</guid><enclosure url=\"http://www.scripting.com/mp3s/weatherReportSuite.mp3\" length=\"4\" type=\"audio/mpeg\"></enclosure><category>News</category><source url=\"http://www.source.de\">source value</source></item><item><description>Item description</description><title>My news</title><author>author@test.de</author><link>http://www.mynews.de</link><comments>http://www.comments.com</comments><pubDate>Fri, 14 Mar 2014 03:11:43 +0100</pubDate><guid isPermaLink=\"false\">abcdefh</guid><enclosure url=\"http://www.scripting.com/mp3s/weatherReportSuite.mp3\" length=\"4\" type=\"audio/mpeg\"></enclosure><category>News</category><source url=\"http://www.source.de\">source value</source></item></channel></rss>";
+
 	@Test
 	public void objectToXml() throws Exception {
+
+		final Date testDate = new GregorianCalendar(2014, 2, 14, 3, 11, 43)
+				.getTime();
 
 		final Rss rss = new Rss();
 
@@ -59,7 +67,7 @@ public class RssModelTest {
 		firstItem.setEnclosure(enclosure);
 		firstItem.setGuid(guid);
 		firstItem.setLink("http://www.mynews.de");
-		firstItem.setPubDate(new Date());
+		firstItem.setPubDate(testDate);
 		firstItem.setSource(source);
 		firstItem.setTitle("My news");
 
@@ -71,7 +79,7 @@ public class RssModelTest {
 		secondItem.setEnclosure(enclosure);
 		secondItem.setGuid(guid2);
 		secondItem.setLink("http://www.mynews.de");
-		secondItem.setPubDate(new Date());
+		secondItem.setPubDate(testDate);
 		secondItem.setSource(source);
 		secondItem.setTitle("My news");
 
@@ -82,10 +90,10 @@ public class RssModelTest {
 		channel.setDocs("http://docs.de");
 		channel.setGenerator("Test generator");
 		channel.setLanguage("DE-de");
-		channel.setLastBuildDate(new Date());
+		channel.setLastBuildDate(testDate);
 		channel.setLink("http://www.newsfeed.de");
 		channel.setManagingEditor("managing@test.com");
-		channel.setPubDate(new Date());
+		channel.setPubDate(testDate);
 		channel.addSkipDays(SkipDay.MONDAY);
 		channel.addSkipDays(SkipDay.WEDNESDAY);
 		channel.addSkipHours(5);
@@ -101,6 +109,22 @@ public class RssModelTest {
 
 		rss.setChannel(channel);
 
-		System.out.println(rss.toXML());
+		assertEquals(RSS_XML, rss.toXML());
+	}
+
+	@Test
+	public void xmlToObject() throws Exception {
+
+		final Date testDate = new GregorianCalendar(2014, 2, 14, 3, 11, 43)
+				.getTime();
+
+		final Rss rss = Rss.toObject(RSS_XML);
+
+		assertEquals("2.0", rss.getVersion());
+		assertEquals("Newsfeed", rss.getChannel().getTitle());
+		assertEquals(testDate, rss.getChannel().getPubDate());
+		assertEquals(2, rss.getChannel().getItem().size());
+
+		// TODO: some more assertions
 	}
 }
